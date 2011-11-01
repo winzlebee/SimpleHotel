@@ -1,0 +1,16 @@
+author: wizzledonker
+database: false
+description: This plugin allows players to create Hotels through the use of signs,
+  aswell as being able to purchase these hotels.
+generator: http://dinnerbone.com/minecraft/tools/pluginator/
+main: me.wizzledonker.plugins.simplehotel.Simplehotel
+name: SimpleHotel
+startup: postworld
+version: '1.0'
+permissions:
+  SimpleHotel.create:
+    Description: States whether or not a player can make a hotel
+    Default: op
+  SimpleHotel.remove:
+    Description: States whether or not a player can destroy hotel signs
+    Default: op

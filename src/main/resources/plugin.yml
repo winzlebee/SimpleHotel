@@ -6,7 +6,8 @@ generator: http://dinnerbone.com/minecraft/tools/pluginator/
 main: me.wizzledonker.plugins.simplehotel.Simplehotel
 name: SimpleHotel
 startup: postworld
-version: '1.0'
+version: '1.1'
+softdepend: [Vault]
 permissions:
   SimpleHotel.create:
     Description: States whether or not a player can make a hotel
@@ -14,3 +15,15 @@ permissions:
   SimpleHotel.remove:
     Description: States whether or not a player can destroy hotel signs
     Default: op
+  SimpleHotel.canbuy:
+    Description: Defines whether or not a user may buy a hotel
+    Default: op
+commands:
+  hotel:
+    description: Command for purchasing a hotel room for a night.
+    usage: /<command> <hotelroom>
+    aliases: [buyhotel, rentroom, stay]
+  delhotel:
+    description: Command for deleting hotels which have been assigned.
+    usage: /<command> <hotelroom>
+    aliases: [removehotel, hotelremove, hoteldel, delroom]

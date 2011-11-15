@@ -30,9 +30,10 @@ public class SimpleHotelListener extends BlockListener{
         if (event.getLine(0).toLowerCase().contains("[hotel]")) {
             if (!player.hasPermission("SimpleHotel.create")) {
                 player.sendMessage(ChatColor.RED + "You are not allowed to create a hotel!");
+                event.setLine(0, "The hotel:");
                 return;
             }
-            if (event.getLine(1).isEmpty()) {
+            if (event.getLine(1).isEmpty() || event.getLine(2).isEmpty()) {
                 player.sendMessage(ChatColor.DARK_GREEN + "Please fill in the missing values!");
                 return;
             }
@@ -40,7 +41,7 @@ public class SimpleHotelListener extends BlockListener{
             event.setLine(0, ChatColor.GREEN + event.getLine(0));
             event.setLine(1, event.getLine(1));
             //Run the final function to create the hotel
-            plugin.NewHotel(player, event.getLine(1).toString());
+            plugin.NewHotel(player, event.getLine(1).toString(), Double.parseDouble(event.getLine(2).toString()));
         }
     }
     @Override
@@ -48,9 +49,9 @@ public class SimpleHotelListener extends BlockListener{
         if (event.getBlock().getType() == Material.SIGN) {
             Sign broken = (Sign) event.getBlock();
             Player player = event.getPlayer();
-            if (player.hasPermission("SimpleHotel.remove")) {
-                String brokenName = broken.getLine(1).toString();
-                plugin.RemoveHotel(player, brokenName);
+            if (broken.getLine(0).equalsIgnoreCase("[hotel]")) {
+                plugin.SignRemoveHotel(player, broken.getLine(1));
+                event.setCancelled(plugin.isBlockCancelled);
             }
         }
     }

@@ -83,7 +83,7 @@ public class Simplehotel extends JavaPlugin {
             tempCoords[0] = getConfig().getInt("hotels." + hotel + ".X");
             tempCoords[1] = getConfig().getInt("hotels." + hotel + ".Y");
             tempCoords[2] = getConfig().getInt("hotels." + hotel + ".Z");
-            economy.withdrawPlayer(player.toString(), price);
+            economy.withdrawPlayer(player.getName(), price);
             player.teleport(new Location(player.getWorld(), tempCoords[0], tempCoords[1], tempCoords[2]));
             player.sendMessage(ChatColor.GREEN + "Successfully checked in to hotel " + ChatColor.WHITE + hotel);
         } else {

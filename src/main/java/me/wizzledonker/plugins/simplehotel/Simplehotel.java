@@ -1,10 +1,9 @@
 package me.wizzledonker.plugins.simplehotel;
 
+import java.util.Set;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
@@ -14,18 +13,18 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.event.player.PlayerListener;
 import org.bukkit.plugin.Plugin;
 
 public class Simplehotel extends JavaPlugin {
     BlockListener simpleHotelListener = new SimpleHotelListener(this);
+    PlayerListener simpleHotelPlayerListener = new SimpleHotelPlayerListener(this);
     CommandExecutor hotelCommands = new SimpleHotelCommands(this);
-    private int[] tempCoords = new int[3];
     public boolean isBlockCancelled = false;
     public static Economy economy = null;
     
     public void onDisable() {
         // TODO: Place any custom disable code here.
-        saveConfig();
         System.out.println("[" + this + "]" + " has shut down...");
     }
 
@@ -34,6 +33,7 @@ public class Simplehotel extends JavaPlugin {
         
         pm.registerEvent(Type.SIGN_CHANGE, simpleHotelListener, Priority.Normal, this);
         pm.registerEvent(Type.BLOCK_BREAK, simpleHotelListener, Priority.Normal, this);
+        pm.registerEvent(Type.PLAYER_INTERACT, simpleHotelPlayerListener, Priority.Normal, this);
         
         //Stuff about registering Vault to work with the server + commands
         if (setupEconomy()) {
@@ -46,6 +46,8 @@ public class Simplehotel extends JavaPlugin {
         getCommand("hotel").setExecutor(hotelCommands);
         
         getCommand("delhotel").setExecutor(hotelCommands);
+        
+        getCommand("listhotels").setExecutor(hotelCommands);
         
         System.out.println("[" + this + "]" + " by wizzledonker loaded on server.");
     }
@@ -66,12 +68,9 @@ public class Simplehotel extends JavaPlugin {
     
     public void NewHotel(Player placer, String name, Double price) {
         Location loc = placer.getLocation();
-        tempCoords[0] = loc.getBlockX();
-        tempCoords[1] = loc.getBlockY();
-        tempCoords[2] = loc.getBlockZ();
-        getConfig().set("hotels." + name + ".X", tempCoords[0]);
-        getConfig().set("hotels." + name + ".Y", tempCoords[1]);
-        getConfig().set("hotels." + name + ".Z", tempCoords[2]);
+        getConfig().set("hotels." + name + ".X", loc.getBlockX());
+        getConfig().set("hotels." + name + ".Y", loc.getBlockY());
+        getConfig().set("hotels." + name + ".Z", loc.getBlockZ());
         getConfig().set("hotels." + name + ".price", price);
         saveConfig();
         placer.sendMessage(ChatColor.GREEN + "You created a new hotel named " + ChatColor.WHITE + name + "!");
@@ -80,11 +79,14 @@ public class Simplehotel extends JavaPlugin {
     public void GotoHotel(Player player, String hotel) {
         if (getConfig().contains("hotels." + hotel)) {
             Double price = getConfig().getDouble("hotels." + hotel + ".price");
-            tempCoords[0] = getConfig().getInt("hotels." + hotel + ".X");
-            tempCoords[1] = getConfig().getInt("hotels." + hotel + ".Y");
-            tempCoords[2] = getConfig().getInt("hotels." + hotel + ".Z");
+            
+            Location loc = new Location( player.getWorld(), 
+                getConfig().getInt("hotels." + hotel + ".X"),
+                getConfig().getInt("hotels." + hotel + ".Y"),
+                getConfig().getInt("hotels." + hotel + ".Z") );
+            
             economy.withdrawPlayer(player.getName(), price);
-            player.teleport(new Location(player.getWorld(), tempCoords[0], tempCoords[1], tempCoords[2]));
+            player.teleport(loc);
             player.sendMessage(ChatColor.GREEN + "Successfully checked in to hotel " + ChatColor.WHITE + hotel);
         } else {
             player.sendMessage(ChatColor.RED + "Not a valid Hotel! Does it exist?");
@@ -105,4 +107,8 @@ public class Simplehotel extends JavaPlugin {
             isBlockCancelled = true;
         }
     }
+    public String getHotels() {
+        Set<String> keys = getConfig().getConfigurationSection("hotels").getKeys(false);
+        return keys.toString();
+    };
 }

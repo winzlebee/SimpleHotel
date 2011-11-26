@@ -73,6 +73,17 @@ public class SimpleHotelCommands implements CommandExecutor{
             }
             return true;
         }
+        
+        if (alias.equalsIgnoreCase("listhotels") || alias.equalsIgnoreCase("hotels")) {
+            //The method for '/listhotels'
+            if (cs.hasPermission("SimpleHotel.list")) {
+                cs.sendMessage("Hotels: " + plugin.getHotels());
+                return true;
+            } else {
+                cs.sendMessage(ChatColor.RED + "You do not have permission to view hotel offers!");
+                return false;
+            }
+        }
         return false;
    }
 }

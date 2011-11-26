@@ -9,14 +9,20 @@ startup: postworld
 version: '1.1'
 softdepend: [Vault]
 permissions:
-  SimpleHotel.create:
+  SimpleHotel.create.hotel:
     Description: States whether or not a player can make a hotel
+    Default: op
+  SimpleHotel.create.checkin:
+    Description: States whether or not a player can create a check-in sign
     Default: op
   SimpleHotel.remove:
     Description: States whether or not a player can destroy hotel signs
     Default: op
   SimpleHotel.canbuy:
-    Description: Defines whether or not a user may buy a hotel
+    Description: Defines whether or not a user may buy a hotel with a sign or command
+    Default: op
+  SimpleHotel.list:
+    Description: Defines whether or not a player can list available hotels
     Default: op
 commands:
   hotel:
@@ -27,3 +33,7 @@ commands:
     description: Command for deleting hotels which have been assigned.
     usage: /<command> <hotelroom>
     aliases: [removehotel, hotelremove, hoteldel, delroom]
+  listhotels:
+    description: Command for listing designated hotels
+    usage: /<command>
+    aliases: [hotels]
